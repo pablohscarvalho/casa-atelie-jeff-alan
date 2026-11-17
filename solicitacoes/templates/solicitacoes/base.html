@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Casa Ateliê Jeff Alan{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'casa/site.css' %}">
+  <script src="{% static 'casa/formulario.js' %}" defer></script>
+</head>
+<body>
+  <a class="atalho" href="#conteudo">Pular para o conteúdo</a>
+  <header class="cabecalho">
+    <nav class="largura" aria-label="Navegação principal">
+      <a class="marca" href="{% url 'inicio' %}">Casa Ateliê Jeff Alan</a>
+      <a href="{% url 'solicitar' %}">Atividades escolares</a>
+    </nav>
+  </header>
+  <main id="conteudo" tabindex="-1">
+    {% block conteudo %}{% endblock %}
+  </main>
+</body>
+</html>

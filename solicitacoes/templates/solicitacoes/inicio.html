@@ -1,0 +1,36 @@
+{% extends "solicitacoes/base.html" %}
+{% load static %}
+{% block conteudo %}
+<section class="abertura largura" aria-labelledby="titulo">
+  <div>
+    <h1 id="titulo">Casa Ateliê<br>Jeff Alan</h1>
+    <p class="introducao">Conheça o trabalho de Jeff Alan e prepare com sua turma uma conversa sobre arte, retrato e representatividade negra.</p>
+    <a class="botao" href="{% url 'solicitar' %}">Solicitar atividade escolar</a>
+  </div>
+  <figure>
+    <img src="{% static 'casa/jeff-alan.webp' %}" width="1600" height="1066" alt="Jeff Alan em uma sala de exposição, cercado por retratos de pessoas negras">
+    <figcaption>Jeff Alan em uma exposição de seus trabalhos.</figcaption>
+  </figure>
+</section>
+<section class="espaco" aria-labelledby="espaco">
+  <div class="largura grade">
+    <figure>
+      <img src="{% static 'casa/fachada.jpg' %}" width="900" height="1200" loading="lazy" alt="Fachada iluminada da Casa Ateliê Jeff Alan, com os portões abertos">
+      <figcaption>Entrada da Casa Ateliê.</figcaption>
+    </figure>
+    <div>
+      <h2 id="espaco">O espaço e as obras</h2>
+      <p>Nas imagens, retratos de pessoas negras ocupam o centro das pinturas. Em sala de aula, a turma pode observar as cores, os olhares e a presença dessas figuras, e discutir como a arte representa identidades e experiências.</p>
+      <figure>
+        <img src="{% static 'casa/retratos.jpg' %}" width="1200" height="800" loading="lazy" alt="Dois quadros com retratos de pessoas negras em uma parede clara">
+        <figcaption>Retratos apresentados no espaço.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="largura escolas" aria-labelledby="escolas">
+  <h2 id="escolas">Para professores e coordenadores</h2>
+  <p>Use as imagens para apresentar o artista à turma antes da visita, inclusive em atividades sobre Consciência Negra. Para propor uma atividade, informe os dados da escola, o período desejado e o tamanho do grupo. Aguarde o retorno da Casa Ateliê para combinar a data.</p>
+  <a class="botao" href="{% url 'solicitar' %}">Solicitar atividade escolar</a>
+</section>
+{% endblock %}

@@ -1,1 +1,11 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Solicitação recebida | Casa Ateliê Jeff Alan</title></head><body><main><h1>Solicitação recebida</h1><h2>Pendente de avaliação</h2><p>A atividade e a data ainda não estão confirmadas. Aguarde o retorno da Casa Ateliê pelo contato informado.</p><a href="{% url 'solicitar' %}">Voltar ao formulário</a></main></body></html>
+{% extends "solicitacoes/base.html" %}
+{% block titulo %}Solicitação recebida | Casa Ateliê Jeff Alan{% endblock %}
+{% block conteudo %}
+<section class="painel">
+  <h1>Solicitação recebida</h1>
+  <h2>Pendente de avaliação</h2>
+  <p>A atividade e a data ainda não estão confirmadas. Aguarde o retorno da Casa Ateliê pelo contato informado.</p>
+  <a class="botao" href="{% url 'inicio' %}">Voltar ao início</a>
+  <p><a href="{% url 'solicitar' %}">Voltar ao formulário</a></p>
+</section>
+{% endblock %}

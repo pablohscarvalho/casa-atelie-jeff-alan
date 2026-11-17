@@ -1,13 +1,31 @@
 import logging
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.db import DatabaseError
+from django.db import DatabaseError, connection
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_GET, require_http_methods
 from .forms import SolicitacaoForm
 from .services import criar_solicitacao
 
 logger = logging.getLogger(__name__)
+
+
+@require_GET
+def inicio(request):
+    return render(request, "solicitacoes/inicio.html")
+
+
+@require_GET
+def saude(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+    except DatabaseError:
+        logger.warning("Banco indisponível durante a verificação de saúde.")
+        return JsonResponse({"status": "unavailable"}, status=503,
+                            headers={"Cache-Control": "no-store"})
+    return JsonResponse({"status": "ok"}, headers={"Cache-Control": "no-store"})
 
 
 @require_http_methods(["GET", "POST"])

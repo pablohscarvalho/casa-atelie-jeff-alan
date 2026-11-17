@@ -1,7 +1,37 @@
-<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Solicitar atividade | Casa Ateliê Jeff Alan</title>
-<style>body{font:18px/1.5 sans-serif;max-width:760px;margin:40px auto;padding:0 20px;background:#f7f4ee;color:#252923}input{box-sizing:border-box;width:100%;padding:12px;font:inherit}label{display:block;font-weight:bold}button{padding:16px;background:#943f2b;color:white;border:0;font:inherit;cursor:pointer}:focus-visible{outline:3px solid #24512e;outline-offset:3px}.errorlist{color:#8b2119}.helptext{display:block;font-size:16px}</style></head>
-<body><main><p>Casa Ateliê Jeff Alan</p><h1>Solicitar atividade escolar</h1><p>O envio registra um pedido. A atividade e a data dependem de avaliação.</p><p>Todos os campos são obrigatórios. Não informe dados individuais dos estudantes.</p>
-{% if form.errors %}<section role="alert" tabindex="-1" id="erros"><h2>Revise a solicitação</h2>{{ form.non_field_errors }}<ul>{% for field in form %}{% for error in field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ error }}</a></li>{% endfor %}{% endfor %}</ul></section>{% endif %}
-<form method="post">{% csrf_token %}{{ form.as_p }}<p>Usaremos o contato para analisar e responder ao pedido.</p><button type="submit">Enviar solicitação</button></form></main>
-{% if form.errors %}<script>document.getElementById('erros').focus();</script>{% endif %}</body></html>
+{% extends "solicitacoes/base.html" %}
+{% block titulo %}Solicitar atividade | Casa Ateliê Jeff Alan{% endblock %}
+{% block conteudo %}
+<section class="painel">
+  <h1>Solicitar atividade escolar</h1>
+  <p>O envio registra um pedido. A atividade e a data dependem de avaliação.</p>
+  <p>Todos os campos são obrigatórios. Não informe dados individuais dos estudantes.</p>
+  {% if form.errors %}
+    <section role="alert" tabindex="-1" id="erros" class="erros">
+      <h2>Revise a solicitação</h2>
+      {{ form.non_field_errors }}
+      {% if form.errors.keys|length > 1 or not form.non_field_errors %}
+        <ul>
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ error }}</a></li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </section>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="campo">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}<small id="{{ field.auto_id }}_helptext">{{ field.help_text }}</small>{% endif %}
+        {{ field.errors }}
+      </div>
+    {% endfor %}
+    <p>Usaremos o contato para analisar e responder ao pedido.</p>
+    <button class="botao" type="submit">Enviar solicitação</button>
+  </form>
+</section>
+{% endblock %}
