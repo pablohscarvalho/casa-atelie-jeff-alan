@@ -1,0 +1,8 @@
+[run]
+source = solicitacoes
+omit =
+    */tests.py
+    */migrations/*
+[report]
+show_missing = True
+precision = 2
