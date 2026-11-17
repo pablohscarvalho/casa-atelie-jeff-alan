@@ -2,6 +2,7 @@
 source = solicitacoes
 omit =
     */tests.py
+    */test_*.py
     */migrations/*
 [report]
 show_missing = True

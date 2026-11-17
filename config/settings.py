@@ -1,6 +1,7 @@
 """Configuração explícita: PostgreSQL por padrão; SQLite somente com opt-in local."""
 import os
 from pathlib import Path
+import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,9 +10,17 @@ if not SECRET_KEY:
     raise ImproperlyConfigured("Defina DJANGO_SECRET_KEY no ambiente.")
 DEBUG = os.environ.get("DJANGO_DEBUG", "0") == "1"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split()
+RENDER_HOST = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_HOST:
+    DEBUG = False
+    ALLOWED_HOSTS.append(RENDER_HOST)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 INSTALLED_APPS = ["django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
                   "django.contrib.sessions", "django.contrib.messages", "django.contrib.staticfiles", "solicitacoes"]
-MIDDLEWARE = ["django.middleware.security.SecurityMiddleware", "django.contrib.sessions.middleware.SessionMiddleware",
+MIDDLEWARE = ["django.middleware.security.SecurityMiddleware", "whitenoise.middleware.WhiteNoiseMiddleware",
+              "django.contrib.sessions.middleware.SessionMiddleware",
               "django.middleware.common.CommonMiddleware", "django.middleware.csrf.CsrfViewMiddleware",
               "django.contrib.auth.middleware.AuthenticationMiddleware", "django.contrib.messages.middleware.MessageMiddleware",
               "django.middleware.clickjacking.XFrameOptionsMiddleware"]
@@ -24,6 +33,13 @@ if os.environ.get("USE_SQLITE") == "1":
     if not DEBUG:
         raise ImproperlyConfigured("SQLite é permitido apenas no modo local de desenvolvimento.")
     DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
+elif os.environ.get("DATABASE_URL"):
+    database = dj_database_url.parse(os.environ["DATABASE_URL"])
+    if database["ENGINE"] != "django.db.backends.postgresql":
+        raise ImproperlyConfigured("DATABASE_URL deve apontar para PostgreSQL.")
+    if RENDER_HOST:
+        database.setdefault("OPTIONS", {}).setdefault("connect_timeout", 4)
+    DATABASES = {"default": database}
 else:
     DATABASES = {"default": {"ENGINE": "django.db.backends.postgresql", "NAME": os.environ.get("POSTGRES_DB", "casa_atelie"),
        "USER": os.environ.get("POSTGRES_USER", "casa_atelie"), "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
@@ -38,7 +54,13 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.PBKDF2PasswordHasher"]
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Recife"
 USE_TZ = True
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+if not DEBUG:
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    }
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = False

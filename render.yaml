@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: casa-atelie-jeff-alan
+    runtime: python
+    branch: feat/solicitacoes-escolares
+    plan: free
+    autoDeployTrigger: "off"
+    buildCommand: python -m pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --access-logfile - --error-logfile -
+    healthCheckPath: /health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.14
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: casa-atelie-postgres
+          property: connectionString
+
+databases:
+  - name: casa-atelie-postgres
+    plan: free
+    ipAllowList: []
